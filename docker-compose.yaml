@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: formula1
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: root
+      JWT_SECRET: superSecret123
+      JWT_EXPIRES_IN: 2h
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+      - cache
+    links:
+      - database
+      - cache
+
+  database:
+    container_name: database
+    image: postgres:14.3
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: formula1
+  cache:
+    container_name: cache
+    image: redis:7.0
